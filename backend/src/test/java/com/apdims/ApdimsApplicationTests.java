@@ -1,4 +1,4 @@
-package com.apdims.apdims;
+package com.apdims;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
