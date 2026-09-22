@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final SlackNotificationService slackNotificationService;
 
     // 1. Create a new Incident
     public IncidentResponse createIncident(CreateIncidentRequest request) {
@@ -45,6 +46,10 @@ public class IncidentService {
                 .build();
 
         Incident savedIncident = incidentRepository.save(incident);
+
+        // Send real-time Slack alert
+        slackNotificationService.sendIncidentCreatedNotification(savedIncident);
+
         return mapToResponse(savedIncident);
     }
 
@@ -123,7 +128,12 @@ public class IncidentService {
         incident.setResolutionSummary(request.getResolutionSummary());
         incident.setResolvedAt(LocalDateTime.now());
 
-        return mapToResponse(incidentRepository.save(incident));
+        Incident savedIncident = incidentRepository.save(incident);
+
+        // Send real-time Slack resolved notification
+        slackNotificationService.sendIncidentResolvedNotification(savedIncident);
+
+        return mapToResponse(savedIncident);
     }
 
     // 10. Close Incident (Lifecycle step: RESOLVED -> CLOSED)

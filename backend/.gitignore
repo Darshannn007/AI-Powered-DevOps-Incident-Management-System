@@ -32,3 +32,4 @@ target/
 ### Logs & Env ###
 *.log
 .env
+application-local.properties
