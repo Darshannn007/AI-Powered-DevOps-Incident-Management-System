@@ -70,6 +70,15 @@ public class Incident {
     @Column(name = "closed_at")
     private LocalDateTime closedAt;
 
+    // SLA Escalation Tracking
+    @Column(name = "escalated", nullable = false)
+    @Builder.Default
+    private boolean escalated = false;
+
+    @Column(name = "escalation_count", nullable = false)
+    @Builder.Default
+    private int escalationCount = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

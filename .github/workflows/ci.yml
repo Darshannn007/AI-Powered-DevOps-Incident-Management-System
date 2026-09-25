@@ -1,0 +1,102 @@
+# ==================================================
+# APDIMS CI Pipeline — GitHub Actions
+# ==================================================
+# Yeh file GitHub ko batati hai:
+# "Jab bhi koi code push kare ya Pull Request banaye → yeh steps chala"
+#
+# Kya hoga:
+# 1. Ubuntu server start hoga (GitHub ka free server)
+# 2. Java 21 install hoga
+# 3. Maven se build hoga
+# 4. Agar build fail → Red ❌ dikhega GitHub pe
+# 5. Agar build pass → Green ✅ dikhega GitHub pe
+# ==================================================
+
+name: APDIMS CI Pipeline
+
+# Kab chalana hai? — Push ya Pull Request pe (main branch pe)
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # ──────────────────────────────────────────────────
+  # JOB 1: Backend Build & Test
+  # ──────────────────────────────────────────────────
+  backend-build:
+    name: 🔧 Backend Build & Test
+    runs-on: ubuntu-latest    # GitHub ka free Ubuntu server use karo
+
+    steps:
+      # Step 1: Code download karo (checkout)
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Java 21 install karo
+      - name: ☕ Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'        # Maven dependencies cache karo (fast build)
+
+      # Step 3: Maven build karo (compile + test)
+      - name: 🔨 Build with Maven
+        run: mvn -B compile -f backend/pom.xml
+        # -B = batch mode (no interactive prompts)
+        # compile = sirf compile karo (test skip kyunki DB nahi hai CI mein)
+
+      # Step 4: Build artifact (JAR file) banao
+      - name: 📦 Package JAR
+        run: mvn -B package -DskipTests -f backend/pom.xml
+        # -DskipTests = tests skip karo (kyunki MySQL CI mein nahi hai)
+        # package = .jar file banao
+
+      # Step 5: JAR file upload karo (download kar sake baad mein)
+      - name: 📤 Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apdims-backend-jar
+          path: backend/target/*.jar
+          retention-days: 7     # 7 din tak rakhna
+
+  # ──────────────────────────────────────────────────
+  # JOB 2: Frontend Build
+  # ──────────────────────────────────────────────────
+  frontend-build:
+    name: 🎨 Frontend Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Code download karo
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Node.js install karo
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # Step 3: Dependencies install karo (npm install)
+      - name: 📥 Install Dependencies
+        run: npm ci
+        working-directory: frontend
+        # npm ci = clean install (faster + exact versions from lock file)
+
+      # Step 4: Build karo (npm run build)
+      - name: 🔨 Build Frontend
+        run: npm run build
+        working-directory: frontend
+
+      # Step 5: Build output upload karo
+      - name: 📤 Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apdims-frontend-dist
+          path: frontend/dist
+          retention-days: 7

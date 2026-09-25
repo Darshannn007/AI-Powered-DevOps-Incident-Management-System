@@ -180,6 +180,8 @@ public class IncidentService {
                 .acknowledgedAt(incident.getAcknowledgedAt())
                 .resolvedAt(incident.getResolvedAt())
                 .closedAt(incident.getClosedAt())
+                .escalated(incident.isEscalated())
+                .escalationCount(incident.getEscalationCount())
                 .createdAt(incident.getCreatedAt())
                 .updatedAt(incident.getUpdatedAt())
                 .build();

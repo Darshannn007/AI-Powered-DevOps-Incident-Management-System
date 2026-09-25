@@ -32,6 +32,8 @@ public class IncidentResponse {
     private LocalDateTime acknowledgedAt;
     private LocalDateTime resolvedAt;
     private LocalDateTime closedAt;
+    private boolean escalated;
+    private int escalationCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -138,6 +138,48 @@ public class SlackNotificationService {
         }
     }
 
+    // SLA Escalation Alert — jab koi incident time pe acknowledge nahi hua
+    public boolean sendSlaEscalationNotification(Incident incident, long minutesBreached) {
+        if (!slackEnabled || webhookUrl == null || webhookUrl.isBlank()) {
+            return false;
+        }
+
+        try {
+            String title = "⏰🔥 SLA BREACH: " + incident.getIncidentNumber() + " NOT ACKNOWLEDGED!";
+
+            List<Map<String, Object>> fields = new ArrayList<>();
+            fields.add(createField("Incident #", incident.getIncidentNumber(), true));
+            fields.add(createField("Severity", "🔴 " + incident.getSeverity().name(), true));
+            fields.add(createField("Service", incident.getServiceName(), true));
+            fields.add(createField("SLA Breached By", minutesBreached + " minutes", true));
+            fields.add(createField("Status", incident.getStatus().name(), true));
+            fields.add(createField("Assigned To", incident.getAssignedTo() != null ? incident.getAssignedTo() : "⚠️ UNASSIGNED", true));
+            fields.add(createField("Title", incident.getTitle(), false));
+            fields.add(createField("Action Required", "⚡ IMMEDIATELY acknowledge and assign this incident!", false));
+
+            Map<String, Object> attachment = new HashMap<>();
+            attachment.put("color", "#FF0000"); // Bright Red for SLA breach
+            attachment.put("pretext", "🚨🚨 *SLA ESCALATION — IMMEDIATE ACTION REQUIRED* 🚨🚨");
+            attachment.put("title", title);
+            attachment.put("fields", fields);
+            attachment.put("footer", "APDIMS • SLA Escalation Engine (Auto)");
+            attachment.put("ts", System.currentTimeMillis() / 1000);
+
+            Map<String, Object> payload = Map.of(
+                    "attachments", List.of(attachment)
+            );
+
+            sendPayload(payload);
+            log.warn("🚨 SLA Escalation alert sent for incident [{}] - breached by {} minutes",
+                    incident.getIncidentNumber(), minutesBreached);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to send SLA escalation alert for incident [{}]: {}",
+                    incident.getIncidentNumber(), e.getMessage());
+            return false;
+        }
+    }
+
     private void sendPayload(Map<String, Object> payload) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
