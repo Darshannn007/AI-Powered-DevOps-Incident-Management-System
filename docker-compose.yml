@@ -1,4 +1,5 @@
-﻿services:
+services:
+  # 1. MySQL Database
   mysql:
     image: mysql:8.0
     container_name: apdims-mysql
@@ -11,5 +12,34 @@
     volumes:
       - mysql_data:/var/lib/mysql
 
+  # 2. Prometheus (Scrapes Spring Boot metrics every 5s)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: apdims-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # 3. Grafana (Visual dashboards on port 3000)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: apdims-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
 volumes:
   mysql_data:
+  grafana_data:
