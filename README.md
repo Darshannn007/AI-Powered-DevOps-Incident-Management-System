@@ -297,6 +297,3 @@ npm run dev
 - **Project Repo:** [AI-Powered DevOps Incident Management System](https://github.com/Darshannn007/AI-Powered-DevOps-Incident-Management-System)
 
 ---
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
