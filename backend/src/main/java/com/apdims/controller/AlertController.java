@@ -2,6 +2,7 @@ package com.apdims.controller;
 
 import com.apdims.dto.AlertDTOs.AlertResponse;
 import com.apdims.dto.AlertDTOs.IngestAlertRequest;
+import com.apdims.dto.AlertDTOs.AlertmanagerWebhookPayload;
 import com.apdims.service.AlertIngestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,18 @@ public class AlertController {
 
     private final AlertIngestionService alertIngestionService;
 
-    // Webhook Endpoint to receive alerts (from Prometheus, Grafana, or Custom tools)
+    // Webhook Endpoint to receive alerts (from Custom tools or direct API)
     @PostMapping("/webhook")
     public ResponseEntity<AlertResponse> ingestAlert(@Valid @RequestBody IngestAlertRequest request) {
         AlertResponse response = alertIngestionService.ingestAlert(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // Native Prometheus Alertmanager Webhook Receiver
+    @PostMapping("/webhook/alertmanager")
+    public ResponseEntity<List<AlertResponse>> ingestAlertmanagerWebhook(@RequestBody AlertmanagerWebhookPayload payload) {
+        List<AlertResponse> responses = alertIngestionService.ingestAlertmanagerWebhook(payload);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     // View all alerts

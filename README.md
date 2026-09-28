@@ -25,8 +25,10 @@
 flowchart TD
     subgraph Ingestion ["1. Alert Ingestion & Observability"]
         A1[External Services / CI/CD] -->|Webhook POST /api/v1/alerts/webhook| B[APDIMS Alert Engine]
-        A2[Prometheus Scraper :9090] -->|Scrapes /actuator/prometheus every 5s| SB[Spring Boot Backend :8080]
-        G[Grafana Dashboards :3000] -->|Queries Metrics| A2
+        SB[Spring Boot Backend :8080] -->|Metrics /actuator/prometheus| A2[Prometheus :9090]
+        A2 -->|Evaluates alert_rules.yml| AM[Alertmanager :9093]
+        AM -->|Native Webhook /api/v1/alerts/webhook/alertmanager| B
+        G[Grafana Dashboards :3000] -->|Visualizes Metrics| A2
     end
 
     subgraph Core ["2. APDIMS Core Backend (Spring Boot 3 + Java 21)"]
@@ -265,7 +267,8 @@ npm run dev
 ### ⚡ Alerts (`/api/v1/alerts`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `POST` | `/api/v1/alerts/webhook` | External webhook alert ingestion & dedup | No |
+| `POST` | `/api/v1/alerts/webhook` | Custom webhook alert ingestion & dedup | No |
+| `POST` | `/api/v1/alerts/webhook/alertmanager` | Native Prometheus Alertmanager webhook receiver | No |
 | `GET` | `/api/v1/alerts` | List all ingested alerts | Yes (Bearer) |
 
 ### 🧠 AI Root Cause Analysis (`/api/v1/ai`)

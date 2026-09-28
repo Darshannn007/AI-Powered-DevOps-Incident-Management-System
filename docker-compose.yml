@@ -21,10 +21,25 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - alertmanager
+
+  # 3. Alertmanager (Dispatches fired Prometheus alerts to APDIMS Webhook)
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: apdims-alertmanager
+    restart: always
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # 3. Grafana (Visual dashboards on port 3000)
+  # 4. Grafana (Visual dashboards on port 3000)
   grafana:
     image: grafana/grafana:latest
     container_name: apdims-grafana

@@ -1,0 +1,35 @@
+groups:
+  - name: apdims_alerts
+    rules:
+      # 1. Alert: High JVM Heap Memory Usage (> 80%)
+      - alert: HighHeapMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 80
+        for: 15s
+        labels:
+          severity: HIGH
+          service: apdims-backend
+        annotations:
+          summary: "High JVM Heap Memory Usage"
+          description: "JVM Heap Memory utilization is currently above 80% threshold."
+
+      # 2. Alert: Backend Service Down (Health check failure)
+      - alert: BackendServiceDown
+        expr: up{job="apdims-backend"} == 0
+        for: 10s
+        labels:
+          severity: CRITICAL
+          service: apdims-backend
+        annotations:
+          summary: "APDIMS Backend Instance Down"
+          description: "The APDIMS Spring Boot backend application instance is unreachable or down."
+
+      # 3. Alert: High HTTP 5xx Error Rate
+      - alert: HighHttpErrorRate
+        expr: rate(http_server_requests_seconds_count{status=~"5.."}[1m]) > 0.05
+        for: 30s
+        labels:
+          severity: CRITICAL
+          service: apdims-backend
+        annotations:
+          summary: "High HTTP 5xx Server Error Rate"
+          description: "HTTP 5xx server error rate has exceeded 0.05 errors per second on apdims-backend."

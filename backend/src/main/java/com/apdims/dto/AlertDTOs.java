@@ -30,6 +30,31 @@ public class AlertDTOs {
         private String fingerprint;
     }
 
+    // Prometheus Alertmanager Native Webhook Payload DTOs
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlertmanagerWebhookPayload {
+        private String version;
+        private String groupKey;
+        private String status; // "firing" or "resolved"
+        private String receiver;
+        private java.util.List<AlertmanagerAlert> alerts;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlertmanagerAlert {
+        private String status;
+        private java.util.Map<String, String> labels;
+        private java.util.Map<String, String> annotations;
+        private String startsAt;
+        private String endsAt;
+        private String generatorURL;
+        private String fingerprint;
+    }
+
     @Data
     @Builder
     @NoArgsConstructor

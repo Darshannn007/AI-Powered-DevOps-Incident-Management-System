@@ -2,9 +2,12 @@ package com.apdims.service;
 
 import com.apdims.dto.AlertDTOs.AlertResponse;
 import com.apdims.dto.AlertDTOs.IngestAlertRequest;
+import com.apdims.dto.AlertDTOs.AlertmanagerWebhookPayload;
+import com.apdims.dto.AlertDTOs.AlertmanagerAlert;
 import com.apdims.dto.CreateIncidentRequest;
 import com.apdims.dto.IncidentResponse;
 import com.apdims.entity.Alert;
+import com.apdims.enums.AlertSource;
 import com.apdims.enums.AlertStatus;
 import com.apdims.enums.IncidentPriority;
 import com.apdims.enums.IncidentSeverity;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -87,6 +92,67 @@ public class AlertIngestionService {
         return alertRepository.findByStatus(AlertStatus.FIRING).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    // Ingest alerts coming directly from Prometheus Alertmanager Webhook
+    public List<AlertResponse> ingestAlertmanagerWebhook(AlertmanagerWebhookPayload payload) {
+        List<AlertResponse> responses = new ArrayList<>();
+        if (payload == null || payload.getAlerts() == null || payload.getAlerts().isEmpty()) {
+            log.warn("Received empty or null Alertmanager webhook payload");
+            return responses;
+        }
+
+        log.info("Processing Prometheus Alertmanager webhook with {} alerts (status: {})",
+                payload.getAlerts().size(), payload.getStatus());
+
+        for (AlertmanagerAlert alertItem : payload.getAlerts()) {
+            Map<String, String> labels = alertItem.getLabels() != null ? alertItem.getLabels() : Map.of();
+            Map<String, String> annotations = alertItem.getAnnotations() != null ? alertItem.getAnnotations() : Map.of();
+
+            String alertName = labels.getOrDefault("alertname", "PrometheusAlert");
+            String serviceName = labels.getOrDefault("service", labels.getOrDefault("job", "apdims-backend"));
+            
+            // Map Prometheus severity to APDIMS IncidentSeverity
+            String rawSeverity = labels.getOrDefault("severity", "HIGH").toUpperCase();
+            IncidentSeverity severity;
+            switch (rawSeverity) {
+                case "CRITICAL":
+                case "PAGE":
+                case "FATAL":
+                    severity = IncidentSeverity.CRITICAL;
+                    break;
+                case "WARNING":
+                case "WARN":
+                case "HIGH":
+                    severity = IncidentSeverity.HIGH;
+                    break;
+                case "LOW":
+                case "INFO":
+                    severity = IncidentSeverity.LOW;
+                    break;
+                default:
+                    severity = IncidentSeverity.MEDIUM;
+                    break;
+            }
+
+            // Description extraction
+            String description = annotations.getOrDefault("description",
+                    annotations.getOrDefault("summary", "Prometheus Alertmanager triggered: " + alertName));
+
+            IngestAlertRequest request = IngestAlertRequest.builder()
+                    .alertName(alertName)
+                    .alertSource(AlertSource.PROMETHEUS)
+                    .severity(severity)
+                    .serviceName(serviceName)
+                    .description(description)
+                    .fingerprint(alertItem.getFingerprint())
+                    .build();
+
+            AlertResponse response = ingestAlert(request);
+            responses.add(response);
+        }
+
+        return responses;
     }
 
     private String generateFingerprint(IngestAlertRequest request) {

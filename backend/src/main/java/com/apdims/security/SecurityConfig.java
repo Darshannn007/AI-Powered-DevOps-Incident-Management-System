@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/api/v1/alerts/webhook").permitAll()
+                .requestMatchers("/api/v1/alerts/webhook/**").permitAll()
                 .requestMatchers("/api/v1/notifications/**").permitAll()
                 // Baaki sab ke liye login zaroori hai
                 .anyRequest().authenticated()
