@@ -4,6 +4,7 @@ import Mainlayout from '../layouts/Mainlayout';
 import Dashboard from '../pages/Dashboard';
 import Incidents from '../pages/Incidents';
 import Alerts from '../pages/Alerts';
+import Monitoring from '../pages/Monitoring';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import ProtectedRoute from './ProtectedRoute';
@@ -22,6 +23,7 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/incidents" element={<Incidents />} />
           <Route path="/alerts" element={<Alerts />} />
+          <Route path="/monitoring" element={<Monitoring />} />
         </Route>
       </Route>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutGrid, Flame, Bell, ShieldCheck, LogOut } from 'lucide-react';
+import { LayoutGrid, Flame, Bell, Activity, ShieldCheck, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Sidebar() {
@@ -10,6 +10,7 @@ export default function Sidebar() {
     { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
     { to: '/incidents', label: 'Incidents', icon: Flame },
     { to: '/alerts', label: 'Alerts Feed', icon: Bell },
+    { to: '/monitoring', label: 'SRE Telemetry', icon: Activity },
   ];
 
   return (
