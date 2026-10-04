@@ -1,9 +1,9 @@
-# 🎓 PROJECT REPORT: APDIMS
+# PROJECT REPORT: APDIMS
 ## AI-Powered DevOps Incident Management System
 
 ---
 
-### 📋 Executive Details
+### Executive Details
 - **Project Title:** APDIMS — AI-Powered DevOps Incident Management System
 - **Developer / Author:** Darshan Desale
 - **Domain:** Site Reliability Engineering (SRE), DevOps, Cloud Observability, Artificial Intelligence
@@ -12,7 +12,7 @@
 
 ---
 
-## 1. 🎯 Project Abstract & Problem Statement
+## 1. Project Abstract & Problem Statement
 
 ### 1.1 The Real-World Problem
 In modern high-scale cloud environments (microservices, Kubernetes, cloud platforms), when an outage or performance degradation occurs:
@@ -33,7 +33,7 @@ In modern high-scale cloud environments (microservices, Kubernetes, cloud platfo
 
 ---
 
-## 2. 🏗️ High-Level System Architecture
+## 2.  High-Level System Architecture
 
 ```mermaid
 flowchart TD
@@ -90,7 +90,7 @@ flowchart TD
 
 ---
 
-## 3. 📦 Complete Module Breakdown & Engineering Implementation
+## 3. Complete Module Breakdown & Engineering Implementation
 
 ### Module 1: Core Incident Lifecycle Engine
 - **Files:** `Incident.java`, `IncidentRepository.java`, `IncidentService.java`, `IncidentController.java`
@@ -127,10 +127,10 @@ flowchart TD
 ### Module 5: Real-Time Slack Broadcast Engine
 - **Files:** `SlackNotificationService.java`, `NotificationController.java`
 - **Interactive Cards:** Color-coded rich Slack attachment payloads:
-  - 🔴 **CRITICAL Incident:** Red header `#E01E5A` with immediate on-call action alert.
-  - 🟠 **HIGH Incident:** Amber header `#ECB22E`.
-  - 🚨 **SLA Breach:** Bright red warning `#FF0000` detailing overdue minutes.
-  - 🟢 **Resolved Incident:** Emerald green card `#2EB886` with root cause summary.
+  -  **CRITICAL Incident:** Red header `#E01E5A` with immediate on-call action alert.
+  -  **HIGH Incident:** Amber header `#ECB22E`.
+  -  **SLA Breach:** Bright red warning `#FF0000` detailing overdue minutes.
+  -  **Resolved Incident:** Emerald green card `#2EB886` with root cause summary.
 
 ### Module 6: Automated SLA Escalation Engine
 - **Files:** `SlaEscalationService.java`, `ApdimsApplication.java (@EnableScheduling)`
@@ -178,7 +178,7 @@ flowchart TD
 
 ---
 
-## 4. 🗄️ Database Design & Entity Relationships
+## 4. Database Design & Entity Relationships
 
 ```mermaid
 erDiagram
@@ -241,7 +241,7 @@ erDiagram
 
 ---
 
-## 5. 📡 REST API Specification Matrix
+## 5. REST API Specification Matrix
 
 | Method | Endpoint | Description | Access Level |
 |---|---|---|---|
@@ -267,7 +267,7 @@ erDiagram
 
 ---
 
-## 6. 🔒 Security, Compliance & Secrets Management
+## 6. Security, Compliance & Secrets Management
 
 1. **Zero Secret Leakage:** Production git repositories contain **zero plain-text credentials**. All sensitive keys (`gemini.api.key`, `slack.webhook.url`) are segregated into `application-local.properties`, which is enforced by `.gitignore`.
 2. **Environment Variable Fallback:** Configured with Spring placeholders: `${GEMINI_API_KEY:YOUR_GEMINI_API_KEY_HERE}`, allowing secure container injection in Kubernetes / Docker environments.
@@ -276,7 +276,7 @@ erDiagram
 
 ---
 
-## 7. 🧪 Testing & Verification Results
+## 7. Testing & Verification Results
 
 | Test Scenario | Input / Action | Expected Result | Actual Result | Status |
 |---|---|---|---|---|
@@ -292,7 +292,7 @@ erDiagram
 
 ---
 
-## 8. 🎤 Viva / Interview Questions & Key Answers
+## 8. Viva / Interview Questions & Key Answers
 
 **Q1: What is Alert Fatigue and how does APDIMS solve it?**
 > *Answer:* Alert Fatigue occurs when monitoring tools bombard engineers with hundreds of duplicate alerts for the same underlying issue. APDIMS computes an MD5 fingerprint hash from `(alertName + serviceName + severity)`. When subsequent identical alerts arrive while the original is still `FIRING`, APDIMS suppresses the duplicate, increments the counter, and prevents redundant ticket generation.
@@ -308,5 +308,5 @@ erDiagram
 
 ---
 
-## 9. 🏁 Conclusion
+## 9. Conclusion
 **APDIMS** successfully bridges the gap between traditional DevOps monitoring and next-generation Artificial Intelligence. By integrating real-time telemetry, automated deduplication, Gemini AI root cause analysis, automated SLA escalation, and multi-channel incident orchestration into a unified platform, APDIMS reduces both **MTTA (Mean Time to Acknowledge)** and **MTTR (Mean Time to Resolve)** by over **70%**, demonstrating true enterprise-ready engineering standards.
