@@ -495,8 +495,176 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
     └──────────────┘      │  ┌──────────────────────┐         │
     ┌──────────────┐      │  │ Auto-Escalate SLA    │←──Timer │
     │ SLA Scheduler│─────│→ │ Breach Incidents      │         │
+    ┌──────────────┐      │  │ Auto-Escalate SLA    │←──Timer │
+    │ SLA Scheduler│─────│→ │ Breach Incidents      │         │
     └──────────────┘      │  └──────────────────────┘         │
                           └────────────────────────────────────┘
+```
+
+### Fig. 4.6: Sequence Diagram — Incident Creation Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Source as Alert Source (Prometheus/CloudWatch)
+    participant AC as AlertController
+    participant AIS as AlertIngestionService
+    participant IS as IncidentService
+    participant DB as MySQL Database
+    participant SNS as SlackNotificationService
+    participant Slack as Slack API
+
+    Source->>AC: POST /api/v1/alerts/webhook (Alert Payload)
+    activate AC
+    AC->>AIS: ingestAlert(request)
+    activate AIS
+    
+    AIS->>AIS: Compute MD5 Fingerprint (name + service + severity)
+    AIS->>DB: findByFingerprintAndStatus(fingerprint, FIRING)
+    activate DB
+    DB-->>AIS: Result (Existing / Null)
+    deactivate DB
+    
+    alt Alert Already FIRING (Duplicate Detected)
+        AIS->>DB: Increment occurrenceCount
+        AIS-->>AC: AlertResponse (Suppressed Duplicate)
+        AC-->>Source: 200 OK (Duplicate Suppressed)
+    else New Alert (Severity CRITICAL / HIGH)
+        AIS->>DB: Save Alert Entity (Status = FIRING)
+        AIS->>IS: createIncident(CreateIncidentRequest)
+        activate IS
+        
+        IS->>IS: Generate Unique Code (INC-YYYYMMDD-XXXX)
+        IS->>DB: INSERT INTO incidents (...)
+        activate DB
+        DB-->>IS: Saved Incident Entity
+        deactivate DB
+        
+        IS->>SNS: sendIncidentCreatedNotification(incident)
+        activate SNS
+        SNS->>Slack: POST Webhook Payload (Red Severity Card)
+        activate Slack
+        Slack-->>SNS: 200 OK
+        deactivate Slack
+        deactivate SNS
+        
+        IS-->>AIS: IncidentResponse DTO
+        deactivate IS
+        
+        AIS->>DB: Link alert.incidentId = incident.id
+        AIS-->>AC: AlertResponse DTO
+        deactivate AIS
+        AC-->>Source: 201 Created (Incident & Alert Registered)
+        deactivate AC
+    end
+```
+
+```
+[Text Representation: Fig. 4.6 Incident Creation Flow]
+Source (Prometheus)   AlertController   AlertIngestionSvc   IncidentService    MySQL Database    SlackNotificationSvc   Slack API
+       │                     │                  │                  │                  │                   │                 │
+       │─── 1. POST Webhook ─▶                  │                  │                  │                   │                 │
+       │                     │── 2. ingestAlert▶│                  │                  │                   │                 │
+       │                     │                  │── 3. Hash MD5 ──┐│                  │                   │                 │
+       │                     │                  │   fingerprint   ││                  │                   │                 │
+       │                     │                  │◀────────────────┘│                  │                   │                 │
+       │                     │                  │── 4. Check Duplicate ──────────────▶│                   │                 │
+       │                     │                  │◀── 5. Not Found (New Alert) ────────│                   │                 │
+       │                     │                  │── 6. Save Alert (FIRING) ───────────▶│                   │                 │
+       │                     │                  │── 7. createIncident() ─────────────▶│                   │                 │
+       │                     │                  │                  │── 8. Gen Code ──┐│                   │                 │
+       │                     │                  │                  │   INC-YYYYMMDD  ││                   │                 │
+       │                     │                  │                  │◀────────────────┘│                   │                 │
+       │                     │                  │                  │── 9. INSERT INTO incidents ─────────▶│                 │
+       │                     │                  │                  │◀── 10. Saved Record ─────────────────│                 │
+       │                     │                  │                  │── 11. sendSlackAlert() ─────────────────────────────────▶│
+       │                     │                  │                  │                                      │── 12. POST Webhook▶
+       │                     │                  │                  │                                      │◀── 13. 200 OK ────┤
+       │                     │                  │◀── 14. IncidentDTO ─────────────────│                   │                 │
+       │                     │◀── 15. AlertDTO ─│                  │                  │                   │                 │
+       │◀── 16. 201 Created ─│                  │                  │                  │                   │                 │
+```
+
+---
+
+### Fig. 4.7: Sequence Diagram — AI Root Cause Analysis (RCA) Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Engineer as SRE Engineer / Admin
+    participant UI as React Dashboard
+    participant AIC as AIAnalysisController
+    participant AIS as GeminiAIService
+    participant IR as IncidentRepository
+    participant Gemini as Google Gemini 1.5 Flash API
+    participant AR as AIAnalysisRepository
+    participant DB as MySQL Database
+
+    Engineer->>UI: Click "Analyze with AI" Button
+    activate UI
+    UI->>AIC: POST /api/v1/ai/analyze/{incidentId} (Bearer JWT)
+    activate AIC
+    
+    AIC->>AIS: analyzeIncident(incidentId)
+    activate AIS
+    
+    AIS->>IR: findById(incidentId)
+    activate IR
+    IR->>DB: SELECT * FROM incidents WHERE id = ?
+    activate DB
+    DB-->>IR: Incident Entity (title, description, logs, service)
+    deactivate DB
+    IR-->>AIS: Incident Object
+    deactivate IR
+    
+    AIS->>AIS: Build SRE Prompt Template (Context + Stack Trace + Runbook format)
+    
+    alt Gemini API Available & Healthy
+        AIS->>Gemini: POST /v1beta/models/gemini-1.5-flash:generateContent (Prompt)
+        activate Gemini
+        Gemini-->>AIS: 200 OK (JSON with Root Cause, Mitigation Steps, Confidence)
+        deactivate Gemini
+    else API Timeout / Rate Limit / Error
+        AIS->>AIS: Trigger Heuristic Diagnostic Fallback Engine
+    end
+    
+    AIS->>AR: save(AIAnalysis Entity)
+    activate AR
+    AR->>DB: INSERT INTO ai_analyses (...)
+    activate DB
+    DB-->>AR: Saved AIAnalysis Entity
+    deactivate DB
+    AR-->>AIS: Persisted Analysis Record
+    deactivate AR
+    
+    AIS-->>AIC: AIAnalysisResponse DTO
+    deactivate AIS
+    AIC-->>UI: 200 OK (Root Cause, Runbook Commands, Confidence Score)
+    deactivate AIC
+    
+    UI->>Engineer: Render AI Root Cause Modal (Markdown + Actionable Runbooks)
+    deactivate UI
+```
+
+```
+[Text Representation: Fig. 4.7 AI Root Cause Analysis Flow]
+Engineer          React Dashboard       AIAnalysisController     GeminiAIService      IncidentRepo / DB       Google Gemini API
+   │                     │                       │                      │                     │                       │
+   │── 1. Click AI RCA ─▶│                       │                      │                     │                       │
+   │                     │── 2. POST /ai/analyze ──────────────────────▶│                     │                       │
+   │                     │      (Bearer JWT)     │                      │── 3. findById() ───▶│                       │
+   │                     │                       │                      │◀── 4. Incident Entity───────────────────────│
+   │                     │                       │                      │                     │                       │
+   │                     │                       │                      │── 5. Format SRE Prompt                      │
+   │                     │                       │                      │── 6. POST generateContent() ───────────────▶│
+   │                     │                       │                      │◀── 7. Root Cause + Mitigation JSON ─────────┤
+   │                     │                       │                      │                     │                       │
+   │                     │                       │                      │── 8. INSERT INTO ai_analyses ──────────────▶│
+   │                     │                       │                      │◀── 9. Saved Record ─────────────────────────┤
+   │                     │                       │◀── 10. AIAnalysisDTO ──────────────────────│                       │
+   │                     │◀── 11. 200 OK (JSON) ─┤                      │                     │                       │
+   │◀── 12. Render Modal ┤                       │                      │                     │                       │
 ```
 
 ---
