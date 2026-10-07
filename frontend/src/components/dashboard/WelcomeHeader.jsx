@@ -36,7 +36,7 @@ export const WelcomeHeader = ({ onOpenCreateModal }) => {
           className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-black text-white rounded-full text-xs font-bold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Add Incident</span>
+          <span>Add Incident</span>
         </button>
       </div>
     </div>
