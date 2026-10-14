@@ -90,17 +90,19 @@
 
 # Abstract
 
-In modern cloud-native and microservices-based software environments, production systems generate an overwhelming volume of monitoring alerts during outages, leading to critical challenges: alert fatigue, delayed incident acknowledgment, prolonged root cause identification, and fragmented team communication. These issues directly impact system reliability, customer SLAs, and engineering productivity.
+Today most software companies run their applications on cloud servers using a microservices setup. When something goes wrong, say a database crashes or a server runs out of memory, the monitoring tools start firing alerts. The problem is, for one single issue, 50 to 100 duplicate alerts can come at the same time. This is called alert fatigue. On top of that, the on-call engineer has to manually go through logs, figure out what went wrong, and then inform the team. This whole process usually takes anywhere between 30 minutes to over an hour, which is too slow when customers are affected.
 
-**APDIMS (AI-Powered DevOps Incident Management System)** addresses these challenges by providing an integrated, enterprise-grade Site Reliability Engineering (SRE) platform that automates the complete incident management lifecycle. The system ingests alerts from multiple observability sources (Prometheus, AWS CloudWatch, Datadog), applies cryptographic MD5 fingerprint-based deduplication to suppress alert storms, and automatically promotes high-severity alerts into structured incident tickets.
+We built APDIMS (AI-Powered DevOps Incident Management System) to solve exactly this. Our system takes in alerts from tools like Prometheus and custom webhooks, and the first thing it does is generate an MD5 hash fingerprint for each alert. If the same alert is already active, the system simply increases the count instead of creating a new ticket. This way, duplicate noise is completely removed.
 
-The platform integrates **Google Gemini 1.5 Flash** AI for automated Root Cause Analysis (RCA), providing probable root causes, immediate mitigation runbooks, and long-term architectural fixes within seconds. An automated **SLA Escalation Engine**, powered by Spring's `@Scheduled` framework, continuously monitors incident response times and escalates breached tickets with emergency Slack notifications.
+For root cause analysis, we connected Google Gemini 1.5 Flash API to the backend. When an engineer clicks "Analyze with AI" on any incident, the system sends the error details and context to Gemini, and within 1 to 2 seconds it returns the probable root cause along with step-by-step commands to fix the issue. We also added a fallback, so if the Gemini API is down or rate-limited, a rule-based heuristic engine kicks in and gives a basic diagnosis instead.
 
-The system features a modern **React 19 Bento-grid dashboard** with JWT-based role management (ADMIN, ENGINEER, VIEWER), real-time **Prometheus + Grafana telemetry** embedded directly into the application UI, and a fully automated **GitHub Actions CI/CD pipeline**.
+One more thing we noticed in real SRE teams is that sometimes nobody picks up a critical ticket for 15-20 minutes. So we built an SLA escalation engine using Spring Boot's scheduler that runs every 60 seconds and checks if any critical incident has been sitting unacknowledged beyond the SLA limit. If yes, it automatically marks it as escalated and fires a red emergency alert on the team's Slack channel.
 
-APDIMS demonstrates a measurable reduction in Mean Time to Acknowledge (MTTA) and Mean Time to Resolve (MTTR) by over 70%, making it a production-ready platform suitable for real-world DevOps and SRE team deployments.
+On the frontend side, we used React 19 with Tailwind CSS to build a clean Bento-grid dashboard. It has JWT login with three roles (Admin, Engineer, Viewer), an incidents management page, AI analysis modals, and even a live monitoring page where we embedded Grafana dashboards directly inside our app using iframe in kiosk mode. The whole project also has a GitHub Actions CI/CD pipeline that automatically builds and tests the code on every push.
 
-**Keywords:** Incident Management, Site Reliability Engineering, Artificial Intelligence, Root Cause Analysis, Alert Deduplication, Prometheus, Grafana, Spring Boot, React, DevOps, SLA Escalation
+After testing, we observed that the average time to acknowledge an incident dropped from around 25 minutes to about 3.4 minutes, and the time to resolve went from 60 minutes down to roughly 14 minutes. That is over 70% improvement in both MTTA and MTTR.
+
+**Keywords:** Incident Management, DevOps, Site Reliability Engineering, Root Cause Analysis, Alert Deduplication, Gemini AI, Prometheus, Grafana, Spring Boot, React, SLA Escalation
 
 ---
 
@@ -108,25 +110,27 @@ APDIMS demonstrates a measurable reduction in Mean Time to Acknowledge (MTTA) an
 
 ## 1.1 Background and Motivation
 
-The rapid adoption of cloud computing, microservices architecture, and containerized deployments (Docker, Kubernetes) has fundamentally transformed how software is built and operated. Modern production environments consist of hundreds of interconnected services, each generating telemetry data — metrics, logs, and traces — at unprecedented scale.
+Over the last few years, the way software is built and deployed has changed a lot. Companies have moved from running everything on a single server to using cloud platforms like AWS, GCP, and Azure where applications are broken into smaller pieces called microservices. Each service runs inside a Docker container, and tools like Kubernetes manage hundreds of these containers at once.
 
-When a system failure occurs, monitoring tools such as Prometheus, Datadog, AWS CloudWatch, and Grafana fire dozens to hundreds of alerts simultaneously. This phenomenon, known as **"alert storming"**, creates several operational challenges:
+Now the thing is, when you have so many services running together, failures become inevitable. A database might run out of connections, a payment API might start timing out, or a server might use up all its RAM. When any of this happens, monitoring tools like Prometheus and Datadog start sending out alerts. But here is the catch — for a single root cause, you can easily get 50 to 100 alerts at once. This is what the industry calls "alert storming."
 
-1. **Alert Fatigue:** On-call engineers receive 50-200+ duplicate notifications for a single underlying issue, causing cognitive overload and missed critical alerts.
-2. **Slow Incident Response:** Without automated triage, engineers manually correlate alerts, identify affected services, and determine root causes — a process that can take 30-60 minutes.
-3. **SLA Violations:** Customer-facing Service Level Agreements (SLAs) mandate acknowledgment within 15 minutes for critical outages. Manual workflows frequently breach these deadlines.
-4. **Knowledge Silos:** Root cause analysis depends heavily on senior engineers' institutional knowledge, creating bottlenecks and single points of failure.
+We experienced this problem firsthand while studying DevOps and SRE concepts. We found that:
 
-The motivation for APDIMS stems from the need for an **intelligent, automated incident management platform** that eliminates these bottlenecks by combining alert engineering, AI-powered diagnostics, and automated escalation into a unified system.
+1. **Alert Fatigue:** Engineers get bombarded with so many duplicate notifications that they start ignoring them, and sometimes a genuinely critical alert gets missed.
+2. **Slow Response:** Without any automation, engineers have to manually read through logs, correlate different alerts, and figure out what actually broke. This can easily take 30 to 60 minutes.
+3. **SLA Breaches:** Many companies promise their clients that critical issues will be acknowledged within 15 minutes. But when everything is manual, this deadline gets missed more often than not.
+4. **Dependency on Senior Engineers:** Usually only 2-3 senior people in the team know the system well enough to diagnose root causes. If they are unavailable, the whole team is stuck.
+
+These problems motivated us to build APDIMS — a system that could handle alert ingestion, filter out duplicates, run AI-based root cause analysis, and automatically escalate delayed tickets, all without needing constant human intervention.
 
 ## 1.2 Problem Definition
 
-The core problems this project addresses:
+Through our study and research, we identified four specific problems that needed to be solved:
 
-1. **Alert Storm Suppression:** How to automatically detect and suppress duplicate alerts originating from the same root cause without losing critical signal data?
-2. **Automated Root Cause Analysis:** How to leverage Large Language Models (LLMs) to provide instant, contextual root cause hypotheses and remediation steps?
-3. **SLA Compliance Enforcement:** How to automatically detect and escalate incidents that breach response time commitments without human intervention?
-4. **Unified Observability:** How to consolidate alerting, incident tracking, AI analysis, team notifications, and system telemetry into a single coherent platform?
+1. **Duplicate Alert Suppression:** When 100 alerts come in for the same database failure, how do we make sure only one incident ticket is created and the rest are silently suppressed?
+2. **Automated Root Cause Diagnosis:** Can we use a Large Language Model like Google Gemini to instantly analyze incident context and suggest what went wrong and how to fix it?
+3. **Automatic SLA Monitoring:** Is it possible to have a background process that continuously watches for unattended tickets and triggers escalation alerts before the SLA deadline is missed?
+4. **Single Unified Platform:** Instead of juggling between Prometheus, Grafana, Slack, and spreadsheets, can we build one dashboard that ties everything together?
 
 ## 1.3 Scope and Objective
 
