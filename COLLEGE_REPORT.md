@@ -236,17 +236,17 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 
 | Category / Resource | Description & Breakdown | Estimated Cost (₹) |
 |---|---|---|
-| **Human Resource & Development Effort** | Team of 4 student developers working across 8 weeks (approx. 160 total engineering hours @ nominal student stipend / research effort of ₹5,000 per person) | ₹20,000 |
-| **Development Environments & IDEs** | IntelliJ IDEA Community Edition & VS Code (Free Open-Source), Git, Docker Desktop Educational | ₹0 (Free / Open Source) |
-| **Cloud Testing, Domain & Server Infrastructure** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹8,500 |
-| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹6,000 |
-| **Software Subscriptions & API Services** | Developer tooling subscriptions (Postman team workspace, Slack Pro test workspace, GitHub Pro student developer tools) | ₹7,500 |
-| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 2 months | ₹5,000 |
+| **Human Resource & Development Effort** | Team of 4 student developers working across 8 weeks (approx. 160 total engineering hours @ nominal research effort / stipend of ₹4,000 per member) | ₹16,000 |
+| **Professional IDE Software License** | **JetBrains IntelliJ IDEA Ultimate Edition** (Commercial/Educational Subscription for Spring Boot 3, JPA/Hibernate & Database tooling) | ₹10,000 |
+| **Cloud Infrastructure & Staging Testing** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹6,000 |
+| **Developer Subscriptions & API Services** | Developer tooling subscriptions (Postman team workspace, Slack Pro test workspace, GitHub Pro student developer tools) | ₹5,500 |
+| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹5,000 |
+| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 2 months | ₹4,500 |
 | **Documentation, Printing & Final Project Report Binding** | Spiral and formal hard-bound copies of project report, black-and-white & color architecture diagram prints | ₹3,000 |
 | **Total Estimated Project Cost** | **Comprehensive Academic & R&D Budget** | **₹50,000 (Fifty Thousand Only)** |
 
-> **Note on Cost Optimization:**  
-> Although industry-grade enterprise SRE platforms cost several lakhs of rupees annually, our team significantly optimized the budget by leveraging open-source tools (IntelliJ IDEA Community Edition, Prometheus, Grafana, MySQL Community Server) and educational free tiers, keeping the total research and development valuation capped at **₹50,000**.
+> **Note on Tooling & Cost Management:**  
+> The use of **IntelliJ IDEA Ultimate Edition** provided critical advanced tooling, including native Spring Boot framework inspection, database query profiling, and Docker integration, directly accelerating development velocity. By combining professional developer subscriptions with open-source infrastructure (Prometheus, Grafana OSS, MySQL Community Server), our team successfully delivered an enterprise-grade platform within the balanced research budget of **₹50,000**.
 
 ---
 
