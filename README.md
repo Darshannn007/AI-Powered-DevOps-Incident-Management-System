@@ -165,7 +165,7 @@ APDIMS/
 | **Language** | Java (OpenJDK Temurin) | 21 | High-performance backend execution |
 | **Backend Framework** | Spring Boot | 3.3.3 | Enterprise REST API framework |
 | **ORM / Database** | Spring Data JPA / MySQL | 8.0 | Relational data persistence & migrations |
-| **Security** | Spring Security + JJWT | 0.12.5 | Stateless JWT authentication & RBAC |
+| **Security** | Spring Security + JJWT | 0.12.3 | Stateless JWT authentication & RBAC |
 | **AI Engine** | Google Gemini API | 1.5 Flash | SRE incident root cause analysis |
 | **Observability** | Prometheus + Micrometer | Latest | Metric collection & scrape targets |
 | **Visualization** | Grafana | Latest | SRE system health dashboards |
