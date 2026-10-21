@@ -33,3 +33,4 @@ target/
 *.log
 .env
 application-local.properties
+application.properties

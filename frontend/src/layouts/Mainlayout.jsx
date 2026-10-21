@@ -50,6 +50,7 @@ export default function Mainlayout() {
               { to: '/dashboard', label: 'Dashboard' },
               { to: '/incidents', label: 'Incidents' },
               { to: '/alerts', label: 'Alerts Feed' },
+              { to: '/monitoring', label: 'Live Telemetry' },
             ].map((tab) => (
               <NavLink
                 key={tab.to}
