@@ -42,7 +42,7 @@ flowchart TD
     end
 
     subgraph Intelligence ["3. AI & Communication Layer"]
-        E -->|Trigger Analysis| AI[Google Gemini 1.5 Flash API]
+        E -->|Trigger Analysis| AI[Google Gemini 3.5 Flash API]
         AI -->|Root Cause + Mitigation Steps| DB
         E -->|Created / Resolved / SLA Breach| SLACK[Slack Channel #all-apdims-alerts]
     end
@@ -63,7 +63,7 @@ flowchart TD
 - If an identical alert arrives within a sliding window, its `occurrenceCount` is incremented without creating duplicate alerts or spamming engineering on-call teams.
 - High and Critical alerts automatically promote into active Incidents.
 
-### 2. 🧠 AI-Powered Root Cause Analysis (Google Gemini 1.5 Flash)
+### 2. 🧠 AI-Powered Root Cause Analysis (Google Gemini 3.5 Flash)
 - Integrated with the **Google Gemini API** using custom SRE prompt engineering.
 - Analyzes incident description, affected service, logs, and stack traces to synthesize:
   - Probable root cause.
@@ -166,7 +166,7 @@ APDIMS/
 | **Backend Framework** | Spring Boot | 3.3.3 | Enterprise REST API framework |
 | **ORM / Database** | Spring Data JPA / MySQL | 8.0 | Relational data persistence & migrations |
 | **Security** | Spring Security + JJWT | 0.12.3 | Stateless JWT authentication & RBAC |
-| **AI Engine** | Google Gemini API | 1.5 Flash | SRE incident root cause analysis |
+| **AI Engine** | Google Gemini API | 3.5 Flash | SRE incident root cause analysis |
 | **Observability** | Prometheus + Micrometer | Latest | Metric collection & scrape targets |
 | **Visualization** | Grafana | Latest | SRE system health dashboards |
 | **Notification** | Slack Webhook API | Incoming Webhook | Team notification & escalation alerts |

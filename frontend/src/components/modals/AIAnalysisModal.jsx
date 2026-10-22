@@ -64,7 +64,7 @@ export const AIAnalysisModal = ({ isOpen, incident, onClose }) => {
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-black text-slate-900">Gemini AI SRE Diagnosis</h3>
               <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                gemini-1.5-flash
+                gemini-3.5-flash
               </span>
             </div>
             <p className="text-xs font-semibold text-gray-400">

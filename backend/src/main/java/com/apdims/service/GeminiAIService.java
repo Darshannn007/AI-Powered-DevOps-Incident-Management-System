@@ -33,7 +33,7 @@ public class GeminiAIService {
     @Value("${gemini.api.key:}")
     private String geminiApiKey;
 
-    @Value("${gemini.api.model:gemini-1.5-flash}")
+    @Value("${gemini.api.model:gemini-3.5-flash}")
     private String modelName;
 
     public AIAnalysisResponse analyzeIncident(Long incidentId) {
