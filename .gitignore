@@ -1,0 +1,26 @@
+# IDE Configuration
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+# Build artifacts & OS files
+target/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.pyc
+__pycache__/
+render_diagram*.html
+diagram_*.png
+fetch_mermaid*.py
+kroki_*.py
+generate_*.py
+
+# Environment & Local Secrets
+.env
+application-local.properties
