@@ -189,7 +189,7 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 | **Technical Feasibility** | ✅ Feasible | Java 21, Spring Boot 3.3.3, React 19, MySQL 8.0, Docker — all are mature, well-documented, production-proven technologies. Google Gemini API is freely available with generous rate limits. |
 | **Operational Feasibility** | ✅ Feasible | The system automates manual incident management workflows, reducing MTTA/MTTR. Engineers interact through an intuitive React dashboard and receive passive Slack notifications. |
 | **Economic Feasibility** | ✅ Feasible | Entire stack is open-source or free-tier: Spring Boot (free), React (free), MySQL Community (free), Docker (free), Prometheus (free), Grafana OSS (free), Gemini API (free tier: 60 RPM). Total infrastructure cost: $0 for development. |
-| **Schedule Feasibility** | ✅ Feasible | 10-module incremental development plan executed over 8 weeks using agile sprint methodology. |
+| **Schedule Feasibility** | ✅ Feasible | 12-week structured Agile sprint methodology divided into 6 two-week sprints. |
 
 ### Risk Analysis:
 
@@ -202,46 +202,42 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 
 ## 3.2 Project Scheduling
 
-### Table 3.2: Project Schedule
+### Table 3.2: Project Schedule (12-Week Agile Roadmap)
 
-| Week | Sprint | Module | Deliverable |
+| Week | Sprint | Phase / Module | Deliverable |
 |---|---|---|---|
-| Week 1 | Sprint 1 | Foundation & Setup | Spring Boot project, Docker MySQL, Maven configuration, Git repository |
-| Week 2 | Sprint 2 | Core Incident Engine | Incident entity, CRUD service, REST controller, status lifecycle |
-| Week 2 | Sprint 3 | Alert Ingestion & Dedup | Alert entity, MD5 fingerprinting, auto-incident promotion |
-| Week 3 | Sprint 4 | AI Root Cause Analysis | Gemini API integration, SRE prompt engineering, heuristic fallback |
-| Week 3-4 | Sprint 5 | JWT Authentication | User entity, Spring Security, JwtUtil, JwtAuthFilter, RBAC |
-| Week 4 | Sprint 6 | Slack Notifications | Webhook service, color-coded cards, incident lifecycle alerts |
-| Week 5-6 | Sprint 7 | React Frontend | Vite + Tailwind dashboard, auth flow, incidents page, AI modal |
-| Week 6-7 | Sprint 8 | Monitoring Stack | Prometheus, Alertmanager, Grafana, embedded telemetry page |
-| Week 7 | Sprint 9 | SLA Escalation Engine | @Scheduled daemon, SLA breach detection, auto-escalation |
-| Week 8 | Sprint 10 | CI/CD + Docs | GitHub Actions pipeline, README, Project Report, final polish |
+| **Week 1–2** | Sprint 1 | **Requirements Analysis & Architecture Design** | SRS document, system architecture design, database schema, Git repo setup |
+| **Week 3–4** | Sprint 2 | **Core Backend & Alert Ingestion Engine** | Spring Boot 3.3.3 setup, Docker MySQL, MD5 alert deduplication, incident lifecycle |
+| **Week 5–6** | Sprint 3 | **AI Root Cause Analysis & Security** | Google Gemini 3.5 Flash integration, heuristic fallback, Spring Security 6 with stateless JWT |
+| **Week 7–8** | Sprint 4 | **SRE Observability & Telemetry Integration** | Prometheus metrics scraping, Alertmanager webhook adapter, Grafana SRE dashboards |
+| **Week 9–10** | Sprint 5 | **React Frontend & Notification Engine** | React 19 Bento-grid UI, embedded Grafana kiosk telemetry, Slack emergency webhooks |
+| **Week 11–12** | Sprint 6 | **SLA Engine, CI/CD Pipeline & Final Audit** | @Scheduled SLA escalation daemon, GitHub Actions CI/CD, QA testing, report binding |
 
 ## 3.3 Effort Allocation and Cost Estimation
 
-### Table 3.3: Effort Allocation
+### Table 3.3: Effort Allocation (12 Weeks Total)
 
 | Activity | Effort (Hours) | Percentage |
 |---|---|---|
-| Requirements Analysis & Design | 15 | 9.4% |
-| Backend Development (Spring Boot) | 55 | 34.4% |
-| Frontend Development (React) | 35 | 21.9% |
-| DevOps & Monitoring Setup | 20 | 12.5% |
-| Testing & Debugging | 15 | 9.4% |
-| Documentation & Report | 10 | 6.2% |
-| Integration & Deployment | 10 | 6.2% |
-| **Total** | **160** | **100%** |
+| Requirements Analysis & Architecture Design | 25 | 10.4% |
+| Backend Core Engine & Security (Spring Boot) | 75 | 31.3% |
+| Frontend Development & Telemetry UI (React 19) | 50 | 20.8% |
+| DevOps, Docker & Observability (Prometheus/Grafana) | 35 | 14.6% |
+| AI Prompt Engineering & Fallback Testing | 20 | 8.3% |
+| System Testing & Quality Assurance | 20 | 8.3% |
+| Documentation, Report Preparation & Final Review | 15 | 6.3% |
+| **Total** | **240** | **100%** |
 
 ### Table 3.4: Detailed Cost Estimation
 
 | Category / Resource | Description & Breakdown | Estimated Cost (₹) |
 |---|---|---|
-| **Human Resource & Development Effort** | Team of 4 student developers working across 8 weeks (approx. 160 total engineering hours @ nominal research effort / stipend of ₹4,000 per member) | ₹16,000 |
+| **Human Resource & Development Effort** | Team of 4 student developers working across 12 weeks (approx. 240 total engineering hours @ nominal research effort / stipend of ₹4,000 per member) | ₹16,000 |
 | **Professional IDE Software License** | **JetBrains IntelliJ IDEA Ultimate Edition** (Commercial/Educational Subscription for Spring Boot 3, JPA/Hibernate & Database tooling) | ₹10,000 |
 | **Cloud Infrastructure & Staging Testing** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹6,000 |
 | **Developer Subscriptions & API Services** | Developer tooling subscriptions (Postman team workspace, Slack Pro test workspace, GitHub Pro student developer tools) | ₹5,500 |
 | **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹5,000 |
-| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 2 months | ₹4,500 |
+| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 3 months (12 weeks) | ₹4,500 |
 | **Documentation, Printing & Final Project Report Binding** | Spiral and formal hard-bound copies of project report, black-and-white & color architecture diagram prints | ₹3,000 |
 | **Total Estimated Project Cost** | **Comprehensive Academic & R&D Budget** | **₹50,000 (Fifty Thousand Only)** |
 
