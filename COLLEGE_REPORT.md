@@ -188,38 +188,65 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 |---|---|---|
 | **Technical Feasibility** | ✅ Feasible | Java 21, Spring Boot 3.3.3, React 19, MySQL 8.0, Docker — all are mature, well-documented, production-proven technologies. Google Gemini API is freely available with generous rate limits. |
 | **Operational Feasibility** | ✅ Feasible | The system automates manual incident management workflows, reducing MTTA/MTTR. Engineers interact through an intuitive React dashboard and receive passive Slack notifications. |
-| **Economic Feasibility** | ✅ Feasible | Entire stack is open-source or free-tier: Spring Boot (free), React (free), MySQL Community (free), Docker (free), Prometheus (free), Grafana OSS (free), Gemini API (free tier: 60 RPM). Total infrastructure cost: $0 for development. |
-| **Schedule Feasibility** | ✅ Feasible | 12-week structured Agile sprint methodology divided into 6 two-week sprints. |
+| **Economic Feasibility** | ✅ Feasible | Entire stack is open-source or free-tier: Spring Boot (free), React (free), MySQL Community (free), Docker (free), Prometheus (free), Grafana OSS (free), Gemini API (free tier). Total infrastructure cost:  for development. |
+| **Schedule Feasibility** | ✅ Feasible | 10-module incremental development plan executed over 12 weeks using agile sprint methodology. |
 
-### Risk Analysis:
+### 3.1.1 Risk Analysis
+
+#### Table 3.2: Risk Analysis
 
 | Risk | Probability | Impact | Mitigation Strategy |
 |---|---|---|---|
 | Gemini API rate limiting or downtime | Medium | High | Built-in heuristic fallback engine activates automatically when API is unavailable. |
 | Alert webhook flooding (DDoS) | Low | High | Fingerprint deduplication suppresses duplicates; rate limiting can be added at API Gateway level. |
-| Database performance degradation | Low | Medium | JPA indexing on `fingerprint`, `status`, `severity` columns; connection pooling via HikariCP. |
-| Secret/API key leakage | Medium | Critical | Secrets stored in gitignored `application-local.properties`; Spring placeholder pattern for environment injection. |
+| Database performance degradation | Low | Medium | JPA indexing on ingerprint, status, severity columns; connection pooling via HikariCP. |
+| Secret/API key leakage | Medium | Critical | Secrets stored in gitignored pplication-local.properties; Spring placeholder pattern for environment injection. |
+
+### 3.1.2 Development Methodology
+
+APDIMS was planned as an incremental development effort following an agile sprint methodology. The system was divided into 10 modules, and each module was treated as one sprint with its own deliverable: Core Incident Lifecycle Engine, Alert Ingestion & Fingerprint Deduplication Engine, AI Root Cause Analysis, Production JWT Authentication & Role-Based Access (RBAC), Real-Time Slack Broadcast Engine, Automated SLA Escalation Engine, Prometheus Alertmanager Integration, SRE Observability & Telemetry Stack, React Modern Bento-Grid Frontend, and Automated CI/CD Pipeline (GitHub Actions). The source code is maintained in a Git repository on GitHub, and every push or pull request to the main branch triggers the automated GitHub Actions CI pipeline.
+
+### 3.1.3 Additional Risks Identified
+
+* **Isolated Unit & Integration Testing in CI:** The CI build pipeline validates parallel compilation and artifact packaging for both Maven (Spring Boot) and Vite (React). Full integration tests requiring live MySQL container services are executed in the local pre-deployment staging environment before triggering production builds.
+* **Missing external service configuration:** If the Gemini API key or the Slack webhook URL is not configured, the system continues to work: the heuristic engine handles the AI analysis and Slack notifications are skipped silently.
+* **Unauthorized access:** Stateless JWT authentication, BCrypt password hashing, role-based access control (ADMIN, ENGINEER, VIEWER), and CORS restricted to the frontend origin (localhost:5173) protect the platform.
 
 ## 3.2 Project Scheduling
 
-### Table 3.2: Project Schedule
+### Table 3.3: Project Schedule
 
 | Week | Module | Deliverable |
 |---|---|---|
-| Week 1 | Foundation & Setup | Spring Boot project, Docker MySQL, Maven configuration, Git repository |
-| Week 2 | Core Incident Engine | Incident entity, CRUD service, REST controller, status lifecycle |
-| Week 3 | Alert Ingestion & Deduplication | Alert entity, MD5 fingerprinting, auto-incident promotion |
-| Week 4-5 | AI Root Cause Analysis | Gemini API integration, SRE prompt engineering, heuristic fallback |
-| Week 5-6 | JWT Authentication | User entity, Spring Security, JwtUtil, JwtAuthFilter, RBAC |
-| Week 7 | Slack Notifications | Webhook service, color-coded cards, incident lifecycle alerts |
-| Week 8-9 | React Frontend | Vite + Tailwind dashboard, auth flow, incidents page, AI modal |
-| Week 9-10 | Monitoring Stack | Prometheus, Alertmanager, Grafana, embedded telemetry page |
-| Week 11 | SLA Escalation Engine | @Scheduled daemon, SLA breach detection, auto-escalation |
-| Week 12 | CI/CD + Docs | GitHub Actions pipeline, README, Project Report, final polish |
+| **Week 1-2** | Core Incident Lifecycle Engine | Spring Boot project, Docker MySQL, Maven configuration, Git repository, Incident entity, CRUD service, REST controller, status lifecycle |
+| **Week 3** | Alert Ingestion & Fingerprint Deduplication Engine | Alert entity, MD5 fingerprinting, auto-incident promotion |
+| **Week 4** | AI Root Cause Analysis | Gemini API integration, SRE prompt engineering, heuristic fallback |
+| **Week 5** | Production JWT Authentication & Role-Based Access (RBAC) | User entity, Spring Security, JwtUtil, JwtAuthFilter, RBAC |
+| **Week 6** | Real-Time Slack Broadcast Engine | Webhook service, color-coded cards, incident lifecycle alerts |
+| **Week 7** | Automated SLA Escalation Engine | @Scheduled daemon, SLA breach detection, auto-escalation |
+| **Week 8** | Prometheus Alertmanager Integration | alert_rules.yml, alertmanager.yml, native Alertmanager webhook endpoint |
+| **Week 9** | SRE Observability & Telemetry Stack | Prometheus, Grafana, embedded telemetry page |
+| **Week 10-11** | React Modern Bento-Grid Frontend | Vite + Tailwind dashboard, auth flow, incidents page, AI modal |
+| **Week 12** | Automated CI/CD Pipeline (GitHub Actions) | GitHub Actions pipeline, README, Project Report, final polish |
+
+### 3.2.1 Actual Progress from GitHub Commit History
+
+The commit history of the project repository records how the work progressed:
+
+* **17 July 2026:** Repository created with the first commit and README.
+* **4 September 2026:** First project commit pushed to the repository.
+* **8 September 2026:** Alert ingestion, deduplication, and incident controller implemented.
+* **22 September 2026:** JWT authentication, Gemini AI root-cause engine, Slack alerts, and React dashboard added.
+* **25 September 2026:** Prometheus and Grafana configured; SLA escalation scheduler and GitHub Actions CI workflow added; README with architecture, API documentation, and setup guide written.
+* **28 September 2026:** Native Prometheus Alertmanager webhook integrated with alerting rules.
+* **2 October 2026:** CI workflow and application properties updated; project report added.
+* **4 October 2026:** Live Grafana SRE telemetry dashboard embedded directly into the React frontend.
+* **5 to 9 October 2026:** College project report prepared, sequence diagrams (Fig 4.6 and Fig 4.7) and the AI root cause analysis sequence diagram image added, and duplicate icon in the Add Incident button fixed.
+* **14 and 15 October 2026:** Abstract and introduction of the report rewritten, and the cost estimation breakdown updated.
 
 ## 3.3 Effort Allocation and Cost Estimation
 
-### Table 3.3: Effort Allocation (12 Weeks Total)
+### Table 3.4: Effort Allocation
 
 | Activity | Effort (Hours) | Percentage |
 |---|---|---|
@@ -230,23 +257,36 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 | AI Prompt Engineering & Fallback Testing | 20 | 8.3% |
 | System Testing & Quality Assurance | 20 | 8.3% |
 | Documentation, Report Preparation & Final Review | 15 | 6.3% |
-| **Total** | **240** | **100%** |
+| **Total** | **240 Hours** | **100%** |
 
-### Table 3.4: Detailed Cost Estimation
+### 3.3.1 Cost Estimation
 
-| Category / Resource | Description & Breakdown | Estimated Market Cost (₹) | Actual Academic Cost Incurred (₹) |
-|---|---|---|---|
-| **Human Resource & Development Effort** | Team of 4 student developers working across 12 weeks (approx. 240 total engineering hours @ nominal research stipend valuation of ₹6,500 per member) | ₹26,000 | ₹0 (Academic Project Work) |
-| **Professional IDE Software License** | **JetBrains IntelliJ IDEA Ultimate Edition** (Commercial annual subscription valuation for Spring Boot 3, JPA profiling & Docker integration) | ₹10,000 | ₹0 (Free JetBrains Student License) |
-| **Cloud Infrastructure & Staging Testing** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹6,000 | ₹0 (Tested on Local Containerized Docker Environment) |
-| **Developer Subscriptions & Tooling** | Developer tooling subscriptions (Postman team workspace, Slack API integration, GitHub Actions compute tier) | ₹5,500 | ₹0 (Free Developer / Student Packs) |
-| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹5,000 | ₹0 (College Central Library & Open Access Repositories) |
-| **Hardware Electricity, High-Speed Broadband & Lab Costs** | High-speed broadband access, development workstation electricity & containerized lab running costs over 3 months (12 weeks) | ₹5,500 | ₹5,500 (Covered by Team Members) |
-| **Documentation, Printing & Final Report Hard Binding** | Spiral drafts, high-resolution color architecture diagram prints, and 4 sets of formal hard-bound project reports | ₹4,000 | ₹4,000 (Actual Direct Expense) |
-| **Total Estimated Project Cost** | **Comprehensive Academic & R&D Valuation** | **₹62,000 (Sixty-Two Thousand Only)** | **₹9,500 (Net Direct Expense)** |
+#### Table 3.5: Cost Estimation
 
-> **Note on Tooling & Cost Management:**  
-> The total engineering valuation of **APDIMS** is evaluated at **₹62,000**, which accurately accounts for 12 weeks (240 engineering hours) of intensive development by a 4-member student team along with professional tooling like **IntelliJ IDEA Ultimate Edition**. As this is an academic project at **G H Raisoni College of Engineering and Management, Jalgaon**, the team successfully optimized actual capital expenditure by leveraging student developer packs, open-source infrastructure (Prometheus, Grafana OSS, MySQL Community Server), and free API tiers, keeping net out-of-pocket expenses capped at **₹9,500** for utility connectivity and formal hard-bound documentation.
+| Category / Resource | Description & Breakdown | Estimated Cost (₹) |
+|---|---|---|
+| **Human Resource & Development Effort** | Team of 4 student developers working across 12 weeks (approx. 240 total engineering hours @ nominal research effort / stipend of ₹7,000 per member) (unpaid academic work) | ₹28,000 |
+| **Professional IDE Software License** | JetBrains IntelliJ IDEA Ultimate Edition (Commercial/Educational Subscription for Spring Boot 3, JPA/Hibernate & Database tooling) (free student dev pack) | ₹10,000 |
+| **Developer Subscriptions & API Services** | Developer tooling subscriptions (Postman team workspace, Slack Pro test workspace, GitHub Pro student developer tools) | ₹5,500 |
+| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, ICSE/ACM research paper access) | ₹5,000 |
+| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 3 months (12 weeks) | ₹6,000 |
+| **Documentation, Printing & Final Project Report Binding** | Spiral and formal hard-bound copies of project report, black-and-white & color architecture diagram prints | ₹3,000 |
+| **Total Estimated Project Cost** | **Comprehensive Academic & R&D Budget** | **₹57,500 (Fifty-Seven Thousand Five Hundred Only)** |
+
+> **Note on Cost Estimation & Academic Resource Utilization:**  
+> The figures presented in Table 3.5 establish the realistic resource valuation of the APDIMS project, totaling an estimated **₹57,500** if procured under standard commercial engineering conditions.  
+> Since this is an academic major project, our team strategically eliminated major capital expenditures by leveraging the JetBrains Educational Program (IntelliJ IDEA Ultimate), existing personal compute hardware, and free-tier developer services (Google Gemini API, GitHub Actions, and Slack Webhooks).
+
+### 3.3.2 Tools Required to Set Up the Project
+
+* **Git:** To clone the repository from GitHub.
+* **Docker Desktop:** To start MySQL 8.0, Prometheus, Alertmanager, and Grafana using Docker Compose.
+* **Java 21 (JDK):** To build and run the Spring Boot backend with Maven.
+* **Node.js 20+ and npm:** To install dependencies and run the React frontend.
+
+### 3.3.3 Summary
+
+The feasibility study found APDIMS technically, operationally, economically, and schedule-wise feasible, since it is built on mature technologies and a stack that is open-source or free-tier. The main risks (API downtime, webhook flooding, database performance, and secret leakage) have defined mitigations, the work was organized into 10 sprint-sized modules over 12 planned weeks with about 240 engineering hours of effort, and the estimated cost of the project is given in Table 3.5.
 
 ---
 
