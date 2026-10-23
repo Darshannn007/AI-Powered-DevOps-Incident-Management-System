@@ -230,19 +230,19 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 
 ### Table 3.4: Detailed Cost Estimation
 
-| Category / Resource | Description & Breakdown | Estimated Cost (₹) |
-|---|---|---|
-| **Human Resource & Development Effort** | Team of 4 student developers working across 12 weeks (approx. 240 total engineering hours @ nominal research effort / stipend of ₹4,000 per member) | ₹16,000 |
-| **Professional IDE Software License** | **JetBrains IntelliJ IDEA Ultimate Edition** (Commercial/Educational Subscription for Spring Boot 3, JPA/Hibernate & Database tooling) | ₹10,000 |
-| **Cloud Infrastructure & Staging Testing** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹6,000 |
-| **Developer Subscriptions & API Services** | Developer tooling subscriptions (Postman team workspace, Slack Pro test workspace, GitHub Pro student developer tools) | ₹5,500 |
-| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹5,000 |
-| **Hardware Electricity, High-Speed Broadband & Cloud Connectivity** | High-speed internet access, development workstation electricity & containerized lab environment running costs over 3 months (12 weeks) | ₹4,500 |
-| **Documentation, Printing & Final Project Report Binding** | Spiral and formal hard-bound copies of project report, black-and-white & color architecture diagram prints | ₹3,000 |
-| **Total Estimated Project Cost** | **Comprehensive Academic & R&D Budget** | **₹50,000 (Fifty Thousand Only)** |
+| Category / Resource | Description & Breakdown | Estimated Market Cost (₹) | Actual Academic Cost Incurred (₹) |
+|---|---|---|---|
+| **Human Resource & Development Effort** | Team of 4 student developers working across 12 weeks (approx. 240 total engineering hours @ nominal research stipend valuation of ₹6,500 per member) | ₹26,000 | ₹0 (Academic Project Work) |
+| **Professional IDE Software License** | **JetBrains IntelliJ IDEA Ultimate Edition** (Commercial annual subscription valuation for Spring Boot 3, JPA profiling & Docker integration) | ₹10,000 | ₹0 (Free JetBrains Student License) |
+| **Cloud Infrastructure & Staging Testing** | Cloud VPS instance for staging/testing, domain name setup, and initial cloud API / AI token tier testing | ₹6,000 | ₹0 (Tested on Local Containerized Docker Environment) |
+| **Developer Subscriptions & Tooling** | Developer tooling subscriptions (Postman team workspace, Slack API integration, GitHub Actions compute tier) | ₹5,500 | ₹0 (Free Developer / Student Packs) |
+| **Reference Materials, Research Books & Standards** | Purchase of standard SRE literature (e.g., *Site Reliability Engineering* by O'Reilly, *The Site Reliability Workbook*, IEEE/ACM research paper access) | ₹5,000 | ₹0 (College Central Library & Open Access Repositories) |
+| **Hardware Electricity, High-Speed Broadband & Lab Costs** | High-speed broadband access, development workstation electricity & containerized lab running costs over 3 months (12 weeks) | ₹5,500 | ₹5,500 (Covered by Team Members) |
+| **Documentation, Printing & Final Report Hard Binding** | Spiral drafts, high-resolution color architecture diagram prints, and 4 sets of formal hard-bound project reports | ₹4,000 | ₹4,000 (Actual Direct Expense) |
+| **Total Estimated Project Cost** | **Comprehensive Academic & R&D Valuation** | **₹62,000 (Sixty-Two Thousand Only)** | **₹9,500 (Net Direct Expense)** |
 
 > **Note on Tooling & Cost Management:**  
-> The use of **IntelliJ IDEA Ultimate Edition** provided critical advanced tooling, including native Spring Boot framework inspection, database query profiling, and Docker integration, directly accelerating development velocity. By combining professional developer subscriptions with open-source infrastructure (Prometheus, Grafana OSS, MySQL Community Server), our team successfully delivered an enterprise-grade platform within the balanced research budget of **₹50,000**.
+> The total engineering valuation of **APDIMS** is evaluated at **₹62,000**, which accurately accounts for 12 weeks (240 engineering hours) of intensive development by a 4-member student team along with professional tooling like **IntelliJ IDEA Ultimate Edition**. As this is an academic project at **G H Raisoni College of Engineering and Management, Jalgaon**, the team successfully optimized actual capital expenditure by leveraging student developer packs, open-source infrastructure (Prometheus, Grafana OSS, MySQL Community Server), and free API tiers, keeping net out-of-pocket expenses capped at **₹9,500** for utility connectivity and formal hard-bound documentation.
 
 ---
 
