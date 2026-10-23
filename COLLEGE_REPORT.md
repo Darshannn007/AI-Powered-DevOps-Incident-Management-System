@@ -202,16 +202,20 @@ Existing tools are either **too expensive** (PagerDuty, ServiceNow), **too limit
 
 ## 3.2 Project Scheduling
 
-### Table 3.2: Project Schedule (12-Week Agile Roadmap)
+### Table 3.2: Project Schedule
 
-| Week | Sprint | Phase / Module | Deliverable |
-|---|---|---|---|
-| **Week 1–2** | Sprint 1 | **Requirements Analysis & Architecture Design** | SRS document, system architecture design, database schema, Git repo setup |
-| **Week 3–4** | Sprint 2 | **Core Backend & Alert Ingestion Engine** | Spring Boot 3.3.3 setup, Docker MySQL, MD5 alert deduplication, incident lifecycle |
-| **Week 5–6** | Sprint 3 | **AI Root Cause Analysis & Security** | Google Gemini 3.5 Flash integration, heuristic fallback, Spring Security 6 with stateless JWT |
-| **Week 7–8** | Sprint 4 | **SRE Observability & Telemetry Integration** | Prometheus metrics scraping, Alertmanager webhook adapter, Grafana SRE dashboards |
-| **Week 9–10** | Sprint 5 | **React Frontend & Notification Engine** | React 19 Bento-grid UI, embedded Grafana kiosk telemetry, Slack emergency webhooks |
-| **Week 11–12** | Sprint 6 | **SLA Engine, CI/CD Pipeline & Final Audit** | @Scheduled SLA escalation daemon, GitHub Actions CI/CD, QA testing, report binding |
+| Week | Module | Deliverable |
+|---|---|---|
+| Week 1 | Foundation & Setup | Spring Boot project, Docker MySQL, Maven configuration, Git repository |
+| Week 2 | Core Incident Engine | Incident entity, CRUD service, REST controller, status lifecycle |
+| Week 3 | Alert Ingestion & Deduplication | Alert entity, MD5 fingerprinting, auto-incident promotion |
+| Week 4-5 | AI Root Cause Analysis | Gemini API integration, SRE prompt engineering, heuristic fallback |
+| Week 5-6 | JWT Authentication | User entity, Spring Security, JwtUtil, JwtAuthFilter, RBAC |
+| Week 7 | Slack Notifications | Webhook service, color-coded cards, incident lifecycle alerts |
+| Week 8-9 | React Frontend | Vite + Tailwind dashboard, auth flow, incidents page, AI modal |
+| Week 9-10 | Monitoring Stack | Prometheus, Alertmanager, Grafana, embedded telemetry page |
+| Week 11 | SLA Escalation Engine | @Scheduled daemon, SLA breach detection, auto-escalation |
+| Week 12 | CI/CD + Docs | GitHub Actions pipeline, README, Project Report, final polish |
 
 ## 3.3 Effort Allocation and Cost Estimation
 
